@@ -2,23 +2,36 @@ import express from "express";
 import zod from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import multer from "multer";
+import { createClient } from "@supabase/supabase-js";
 import { SigninSchema, SignupSchema } from "./user.js";
 import { adminModel, courseModel } from "../db.js";
 import { JWT_SECRET, saltrounds } from "../index.js";
 import { adminMiddleware } from "../middleware.js";
 const adminRouter = express.Router();
+const SUPABASE_URL = "https://ckasuyzkqxqeqbjqljvw.supabase.co";
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
+if (!SUPABASE_KEY) {
+    throw new Error("SUPABASE_KEY is not defined");
+}
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const fileExtensions = {
+    image: /\.(jpg|jpeg|png|gif|webp)$/i,
+};
 const courseSchema = zod.object({
     title: zod.string().min(4),
     description: zod.string().min(8),
-    price: zod.number().min(500).max(10000),
-    imageUrl: zod.string()
+    price: zod.preprocess((val) => Number(val), zod.number().min(500).max(10000)),
+    imageUrl: zod.string().optional()
 });
 const updateSchema = zod.object({
     courseId: zod.string(),
     title: zod.string().min(4),
     description: zod.string().min(8),
     price: zod.number().min(500).max(10000),
-    imageUrl: zod.string()
+    imageUrl: zod.string().optional()
 });
 adminRouter.post("/signup", async (req, res) => {
     try {
@@ -101,30 +114,53 @@ adminRouter.get("/", adminMiddleware, async (req, res) => {
         });
     }
 });
-adminRouter.post("/create", adminMiddleware, async (req, res) => {
+adminRouter.post("/create", adminMiddleware, upload.single("file"), async (req, res) => {
     try {
         const id = req.adminId;
-        const { success } = courseSchema.safeParse(req.body);
+        const { success, data } = courseSchema.safeParse(req.body);
         if (!success) {
+            return res.status(400).json({ message: "Wrong Inputs Provided" });
+        }
+        const { title, description, price } = data;
+        let fileUrl = "";
+        if (req.file) {
+            const fileName = `${Date.now()}_${req.file.originalname}`;
+            const { data: uploadData, error } = await supabase.storage
+                .from("images")
+                .upload(fileName, req.file.buffer, {
+                contentType: req.file.mimetype,
+                upsert: false,
+            });
+            if (error) {
+                console.error("Supabase upload error:", error);
+                return res.status(500).json({
+                    message: "Failed to upload file",
+                    error,
+                });
+            }
+            fileUrl = `${SUPABASE_URL}/storage/v1/object/public/images/${fileName}`;
+        }
+        if (!fileUrl) {
             return res.status(400).json({
-                message: "Wrong Inputs Provided"
+                message: "A file or a valid link is required",
             });
         }
-        const { title, description, price, imageUrl } = req.body;
         const response = await courseModel.create({
             title,
             description,
             price,
-            imageUrl,
-            createrId: id
+            imageUrl: fileUrl,
+            createrId: id,
         });
         console.log(response._id);
-        return res.status(200).json({ message: `Course Successfully added at ${response._id} ` });
+        return res.status(200).json({
+            message: `Course Successfully added at ${response._id}`,
+        });
     }
     catch (error) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({
-            message: "Internal Error Occured"
+            message: "Internal Error Occurred",
         });
     }
 });
