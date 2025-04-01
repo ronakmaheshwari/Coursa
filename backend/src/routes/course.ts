@@ -19,7 +19,7 @@ courseRouter.get("/preview",async(req:any,res:any)=>{
 courseRouter.post("/purchase",authMiddleware,async(req:any,res:any)=>{
     try{
         const { courseId } = req.body;
-        const userId = req.id;
+        const userId = req.userid;
 
         if (!userId) {
             return res.status(401).json({ message: "Unauthorized access" });

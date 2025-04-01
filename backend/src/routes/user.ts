@@ -98,7 +98,7 @@ userRouter.post("/signin", async (req: any, res: any) => {
 
 userRouter.get("/purchases",authMiddleware,async(req:any,res:any)=>{
     try{
-        const response= await purchaseModel.find({userId:req.id})
+        const response= await purchaseModel.find({userId:req.userid})
         return res.status(200).json({courses:response})
     }catch(error){
         console.log(error)

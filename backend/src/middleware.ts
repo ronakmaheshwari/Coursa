@@ -22,7 +22,7 @@ const authMiddleware = (req: any, res: any, next: NextFunction) => {
         const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
 
         if ("userId" in decoded) {
-            req.id = decoded.userId;
+            req.userid = decoded.userId;
             next();
         } else {
             return res.status(403).json({ message: "Invalid token" });
