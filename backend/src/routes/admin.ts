@@ -16,7 +16,7 @@ const courseSchema = zod.object({
 })
 
 const updateSchema = zod.object({
-    id:zod.number(),
+    courseId:zod.string(),
     title: zod.string().min(4),
     description:zod.string().min(8),
     price:zod.number().min(500).max(10000),
@@ -41,7 +41,7 @@ adminRouter.post("/signup",async(req:any,res:any)=>{
             })
         }
 
-        const hash = bcrypt.hash(password,saltrounds)
+        const hash =await bcrypt.hash(password,saltrounds)
         const response = await adminModel.create({
             email,
             password:hash,
@@ -63,7 +63,7 @@ adminRouter.post("/signup",async(req:any,res:any)=>{
     }
 })
 
-adminRouter.post("/signup",async(req:any,res:any)=>{
+adminRouter.post("/signin",async(req:any,res:any)=>{
     try{
         const {success} = SigninSchema.safeParse(req.body)
 

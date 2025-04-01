@@ -82,7 +82,7 @@ userRouter.post("/signin", async (req, res) => {
 });
 userRouter.get("/purchases", authMiddleware, async (req, res) => {
     try {
-        const response = await purchaseModel.find({ userId: req.id });
+        const response = await purchaseModel.find({ userId: req.userid });
         return res.status(200).json({ courses: response });
     }
     catch (error) {

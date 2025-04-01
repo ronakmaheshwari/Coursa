@@ -14,7 +14,7 @@ const courseSchema = zod.object({
     imageUrl: zod.string()
 });
 const updateSchema = zod.object({
-    id: zod.number(),
+    courseId: zod.string(),
     title: zod.string().min(4),
     description: zod.string().min(8),
     price: zod.number().min(500).max(10000),
@@ -35,7 +35,7 @@ adminRouter.post("/signup", async (req, res) => {
                 message: "Email Provided Already Exists"
             });
         }
-        const hash = bcrypt.hash(password, saltrounds);
+        const hash = await bcrypt.hash(password, saltrounds);
         const response = await adminModel.create({
             email,
             password: hash,
@@ -56,7 +56,7 @@ adminRouter.post("/signup", async (req, res) => {
         });
     }
 });
-adminRouter.post("/signup", async (req, res) => {
+adminRouter.post("/signin", async (req, res) => {
     try {
         const { success } = SigninSchema.safeParse(req.body);
         if (!success) {
