@@ -4,7 +4,13 @@ import { authMiddleware } from "../middleware.js";
 const courseRouter = express.Router();
 courseRouter.get("/preview", async (req, res) => {
     try {
-        const finder = await courseModel.find();
+        const filter = req.query.filter || "";
+        const finder = await courseModel.find({
+            $or: [
+                { title: { "$regex": filter, "$options": "i" } },
+                { description: { "$regex": filter, "$options": "i" } },
+            ]
+        });
         return res.status(200).json({ courses: finder });
     }
     catch (error) {

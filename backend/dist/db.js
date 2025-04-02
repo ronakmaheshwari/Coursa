@@ -4,7 +4,7 @@ dotenv.config();
 if (!process.env.Mongo_URL) {
     throw new Error("Mongo_URL environment variable is not defined");
 }
-mongoose.connect(process.env.Mongo_URL);
+mongoose.connect();
 const userSchema = new Schema({
     email: { type: String, unique: true },
     password: { type: String, required: true },
