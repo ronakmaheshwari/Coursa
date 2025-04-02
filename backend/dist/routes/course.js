@@ -5,23 +5,30 @@ const courseRouter = express.Router();
 courseRouter.get("/preview", async (req, res) => {
     try {
         const filter = req.query.filter || "";
-        const finder = await courseModel.find({
+        const courses = await courseModel.find({
             $or: [
                 { title: { "$regex": filter, "$options": "i" } },
                 { description: { "$regex": filter, "$options": "i" } },
             ]
-        });
-        return res.status(200).json({ courses: finder });
+        }, "_id title description imageUrl price");
+        const formattedCourses = courses.map(course => ({
+            id: course._id.toString(),
+            title: course.title,
+            description: course.description,
+            imageUrl: course.imageUrl,
+            price: course.price,
+        }));
+        console.log("Sending Courses:", formattedCourses);
+        return res.status(200).json({ courses: formattedCourses });
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({
-            message: "Internal Error Occured"
-        });
+        return res.status(500).json({ message: "Internal Error Occurred" });
     }
 });
 courseRouter.post("/purchase", authMiddleware, async (req, res) => {
     try {
+        console.log(req.body);
         const { courseId } = req.body;
         const userId = req.userid;
         if (!userId) {

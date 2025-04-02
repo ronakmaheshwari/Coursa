@@ -96,16 +96,19 @@ userRouter.post("/signin", async (req: any, res: any) => {
     }
 });
 
-userRouter.get("/purchases",authMiddleware,async(req:any,res:any)=>{
-    try{
-        const response= await purchaseModel.find({userId:req.userid})
-        return res.status(200).json({courses:response})
-    }catch(error){
-        console.log(error)
+userRouter.get("/purchases", authMiddleware, async (req: any, res: any) => {
+    try {
+        const response = await purchaseModel.find({ userId: req.userid })
+            .populate("courseId"); 
+
+        return res.status(200).json({ courses: response.map(purchase => purchase.courseId) });
+    } catch (error) {
+        console.log(error);
         return res.status(500).json({
-            message:"Internal Error Occured"
-        })
+            message: "Internal Error Occurred"
+        });
     }
-})
+});
+
 
 export {userRouter}

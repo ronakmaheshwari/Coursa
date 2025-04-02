@@ -1,16 +1,16 @@
-import ContentDiv from "../components/Content";
-import Header from "../components/Header";
-import SideBar from "../components/SideBar";
+import AdminCourseSide from "../components/AdminCourseSide";
+import AdminHeader from "../components/AdminHeader";
+import AdminSideBar from "../components/AdminSideboard";
 
-export default function Dashboard() {
+export default function AdminDashboard() {
     return (
         <div className="flex flex-col w-screen h-screen overflow-hidden">
-            <Header />
+            <AdminHeader />
             <div className="flex flex-1 bg-slate-50 p-2 gap-2 overflow-hidden">
-                <SideBar />
+                <AdminSideBar />
 
                 <main className="flex-1 bg-white rounded-lg shadow-md p-4 h-full overflow-y-auto scrollbar-hide">
-                    <ContentDiv title="Courses"/>
+                    <AdminCourseSide title="Courses"/>
                 </main>
             </div>
         </div>
