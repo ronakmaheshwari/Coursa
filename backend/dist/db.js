@@ -1,10 +1,8 @@
 import mongoose, { Schema } from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
 if (!process.env.Mongo_URL) {
-    throw new Error("Mongo_URL environment variable is not defined");
+    throw new Error("Mongo_URL is not defined in the environment variables");
 }
-mongoose.connect("mongodb+srv://ronak:difN0qPVinoTH791@cluster0.gq8an.mongodb.net/coursa");
+mongoose.connect(process.env.Mongo_URL);
 const userSchema = new Schema({
     email: { type: String, unique: true },
     password: { type: String, required: true },

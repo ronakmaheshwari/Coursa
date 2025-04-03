@@ -11,8 +11,8 @@ import { adminMiddleware } from "../middleware.js"
 
 const adminRouter = express.Router()
 
-const SUPABASE_URL = "";
-const SUPABASE_KEY = "";
+const SUPABASE_URL = "https://ckasuyzkqxqeqbjqljvw.supabase.co";
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 
 if (!SUPABASE_KEY) {
     throw new Error("SUPABASE_KEY is not defined");

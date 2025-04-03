@@ -10,7 +10,7 @@ import { JWT_SECRET, saltrounds } from "../index.js";
 import { adminMiddleware } from "../middleware.js";
 const adminRouter = express.Router();
 const SUPABASE_URL = "https://ckasuyzkqxqeqbjqljvw.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrYXN1eXprcXhxZXFianFsanZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0OTUwMzQsImV4cCI6MjA1OTA3MTAzNH0._zsPu7AGlP24mcbP__wWmHUo7Mz3cONIkr2mXM47QH4";
+const SUPABASE_KEY = process.env.SUPABASE_KEY;
 if (!SUPABASE_KEY) {
     throw new Error("SUPABASE_KEY is not defined");
 }

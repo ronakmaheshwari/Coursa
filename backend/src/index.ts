@@ -5,11 +5,7 @@ import router from "./routes/index.js"
 import path from "path"
 import dotenv from "dotenv";
 
-// dotenv.config({ path: path.resolve(__dirname, "../.env") });
-
-export const SUPABASE_URL = process.env.SUPABASE_URL;
-export const SUPABASE_KEY = process.env.SUPABASE_KEY!;
-export const Mongo_URL = process.env.MONGO_URL!;
+dotenv.config();
 
 const app = express()
 const port = process.env.PORT || 3000
